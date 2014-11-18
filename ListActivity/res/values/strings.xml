@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ListActivity</string>
+    <string name="hello_world">No hay Elementos para mostrar</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="android_names">
+        <item>Cupcake</item>
+        <item>Donut</item>
+        <item>Eclair</item>
+        <item>Froyo</item>
+        <item>Gingerbread</item>
+        <item>Honeycomb</item>
+        <item>Ice Cream Sandwich</item>
+        <item>Jelly Beam</item>
+        <item>KitKat</item>
+        <item>Lollypop</item>
+    </string-array>
+
+</resources>
