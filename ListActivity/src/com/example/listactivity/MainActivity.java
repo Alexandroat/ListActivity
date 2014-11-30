@@ -40,13 +40,14 @@ public class MainActivity extends ListActivity {
 		if (mBlogPostTitles != null) {
 			textview.setVisibility(textview.INVISIBLE);
 		}
-		
+
 		if (isNetworkAvailable()) {
 			getBlogPosTask.execute();
 		} else {
-			Toast.makeText(this, "SIIII", Toast.LENGTH_LONG);
+			Toast.makeText(this, R.string.no_connection_message,
+					Toast.LENGTH_LONG).show();
+
 		}
-		
 
 	}
 

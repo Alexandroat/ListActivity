@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">ListActivity</string>
-    <string name="No_elements">There aren\'t any elements to show</string>
+    <string name="No_elements">No hay elementos que mostrar</string>
     <string name="action_settings">Settings</string>
-    <string name="no_connection_message">Network is unaviable !</string>
+    <string name="no_connection_message">¡ Red no disponible !</string>
     
 
 </resources>
