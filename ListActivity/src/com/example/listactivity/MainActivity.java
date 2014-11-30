@@ -1,9 +1,15 @@
 package com.example.listactivity;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -20,9 +26,10 @@ import android.widget.Toast;
 
 public class MainActivity extends ListActivity {
 	protected String mBlogPostTitles[];
+	public final static String TAG = MainActivity.class.getSimpleName();
 	private TextView textview;
-	ArrayAdapter<String> adapter;
-	GetBlogPosTask getBlogPosTask = new GetBlogPosTask();
+	private ArrayAdapter<String> adapter;
+	private GetBlogPosTask getBlogPosTask = new GetBlogPosTask();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +39,11 @@ public class MainActivity extends ListActivity {
 		// mBlogPostTitles =
 		// getResources().getStringArray(R.array.android_names);
 
-		/*
-		 * adapter = new ArrayAdapter<String>(this,
-		 * android.R.layout.simple_list_item_1, MBlogPostTiles);
-		 * setListAdapter(adapter);
-		 */
+		
+		 adapter = new ArrayAdapter<String>(this,
+		 android.R.layout.simple_list_item_1, mBlogPostTitles);
+		 setListAdapter(adapter);
+		 
 		if (mBlogPostTitles != null) {
 			textview.setVisibility(textview.INVISIBLE);
 		}
@@ -60,41 +67,86 @@ public class MainActivity extends ListActivity {
 		}
 		return isAvailable;
 	}
+	
+	class GetBlogPosTask extends AsyncTask<Object, Object, Object> {
+		public final static int NUMBER_OF_POSTS = 20;
+		
+		final static String URL_JSON = "http://itvocationalteacher.blogspot.com/feeds/posts/default?alt=json";
 
-}
+		// public GetBlogPosTask()
 
-class GetBlogPosTask extends AsyncTask {
-	public final static int NUMBER_OF_POSTS = 20;
-	public static String TAG = MainActivity.class.getSimpleName();
-	final static String URL_JSON = "http://itvocationalteacher.blogspot.com/feeds/posts/default?alt=json";
+		@Override
+		protected Object doInBackground (Object... params) {
+			int responseCode = -1;
+			URL blogFeedUrl = null;
 
-	// public GetBlogPosTask()
+			try {
+				blogFeedUrl = new URL(URL_JSON);
 
-	@Override
-	protected Object doInBackground(Object... params) {
-		int responseCode = -1;
-		URL blogFeedUrl = null;
+				HttpURLConnection connection = (HttpURLConnection) blogFeedUrl
+						.openConnection();
+				JSONObject jsonObject;
+				JSONObject jsonFeed;
+				JSONArray jsonAentry;
+				JSONObject mBlogData;
+				
+				//String test = "";
+				
+				if (connection != null) {
+					connection.connect();
+				}
+				responseCode = connection.getResponseCode();
 
-		try {
-			blogFeedUrl = new URL(URL_JSON);
+				if (connection.HTTP_OK == 200) {
 
-			HttpURLConnection connection = (HttpURLConnection) blogFeedUrl
-					.openConnection();
-			if (connection != null) {
-				connection.connect();
+					InputStream inputStream = connection.getInputStream();
+					BufferedReader bufferedReader = new BufferedReader(
+							new InputStreamReader(inputStream));
+					StringBuilder stringBuilder = new StringBuilder();
+					String lines;
+					String text = "";
+					
+					while ((lines = bufferedReader.readLine()) != null) {
+
+						stringBuilder = stringBuilder.append(lines);
+						text = stringBuilder.toString();
+
+					}
+					
+					//Log.i(TAG, "Json: " + text);
+					jsonObject = new JSONObject(text);
+					//jsonObject.getString("version");
+					jsonFeed = jsonObject.getJSONObject("feed");
+					jsonAentry = jsonFeed.getJSONArray("entry");
+					
+					for (int i = 0; i < jsonAentry.length(); i++) {
+						JSONObject jsonPost = (JSONObject) jsonAentry.get(i);
+	                    JSONObject jsonTitle = (JSONObject) jsonPost.get("title");
+	                    mBlogPostTitles = new String[jsonTitle.length()];
+	                    //String title = Html.escapeHtml(jsonTitle.getString("$t"));
+	                     mBlogPostTitles[i] = jsonTitle.getString("$t").toString();
+	                   //Log.i(TAG, "Titulosss: " + test);
+					}
+					
+					
+				} else {
+					Log.e(TAG, "Unable to connect : " + responseCode);
+				}
+
+				Log.i(TAG, "code : " + responseCode);
+
+			} catch (MalformedURLException e) {
+
+				Log.e(TAG, "exception caught : ", e);
+
+			} catch (Exception e) {
+				System.err.println("Error");
 			}
-			responseCode = connection.getResponseCode();
-
-			Log.i(TAG, "code : " + responseCode);
-
-		} catch (MalformedURLException e) {
-
-			Log.e(TAG, "exception caught : ", e);
-
-		} catch (Exception e) {
-			System.err.println("Error");
+			return mBlogPostTitles;
 		}
-		return "Code" + responseCode;
+
 	}
 
 }
+
+
