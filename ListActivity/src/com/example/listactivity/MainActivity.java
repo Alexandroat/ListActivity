@@ -31,7 +31,6 @@ public class MainActivity extends ListActivity {
 	protected String mBlogPostTitles[];
 	public final static String TAG = MainActivity.class.getSimpleName();
 	private TextView textview;
-	// private ArrayAdapter<String> adapter;
 	private GetBlogPosTask getBlogPosTask = new GetBlogPosTask();
 	public final static int NUMBER_OF_POSTS = 20;
 	private JSONObject mBlogData;
@@ -57,10 +56,9 @@ public class MainActivity extends ListActivity {
 
 	public void updateList() {
 		if (mBlogData != null) {
-			// TODO : Manejar errores
+			
 			try {
-				// JSONObject jsonObject = new JSONObject(text);
-				// jsonObject.getString("version");
+				
 				JSONObject jsonFeed = mBlogData.getJSONObject("feed");
 				JSONArray jsonAentry = jsonFeed.getJSONArray("entry");
 				mBlogPostTitles = new String[jsonAentry.length()];
@@ -84,7 +82,7 @@ public class MainActivity extends ListActivity {
 				Log.e(TAG, "exception caught:", e);
 			}
 		} else {
-			// Log.e(TAG, mBlogData.toString());
+			 Log.e(TAG, mBlogData.toString());
 		}
 
 	}
@@ -100,8 +98,6 @@ public class MainActivity extends ListActivity {
 	}
 
 	class GetBlogPosTask extends AsyncTask<Object, Void, JSONObject> {
-
-		// public GetBlogPosTask()
 
 		@Override
 		protected JSONObject doInBackground(Object[] params) {
